@@ -46,6 +46,7 @@ function AccountPage() {
           <Link to="/shipping-policy"><Package size={18} /> Shipping policy <ChevronRight size={16} /></Link>
           <Link to="/returns"><Package size={18} /> Returns &amp; refunds <ChevronRight size={16} /></Link>
           <Link to="/contact"><UserRound size={18} /> Contact us <ChevronRight size={16} /></Link>
+          {user && <Link to="/seller"><Package size={18} /> Seller dashboard <ChevronRight size={16} /></Link>}
         </section>
       </>}
 
