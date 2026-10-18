@@ -14,7 +14,7 @@ import { MidnightBackdrop } from '@/components/MidnightBackdrop';
 export const Route = createFileRoute('/watches/$watchId')({
   ssr: false,
   validateSearch: (search: Record<string, unknown>): { tryon?: boolean } => (search['tryon'] === true || search['tryon'] === 'true' ? { tryon: true } : {}),
-  beforeLoad: ({ params }) => { if (!watches.some(w => w.id === params.watchId)) throw notFound(); },
+  beforeLoad: ({ params }) => { if (!['steel','black','gold','rosegold'].includes(params.watchId)) throw notFound(); },
   head: ({ params }) => {
     const watch = watches.find(w => w.id === params.watchId);
     const title = `${watch?.name ?? 'Watch'} — The Collection`;
