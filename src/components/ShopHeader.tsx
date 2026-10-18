@@ -31,7 +31,8 @@ function MobileLogin({ open, onOpenChange }: { open: boolean; onOpenChange: (o: 
     if (!name.trim()) { toast.error('Enter your name'); return; }
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) { toast.error('Enter a valid email'); return; }
     setBusy(true);
-    const { error } = await supabase.auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: true, emailRedirectTo: window.location.origin, data: { display_name: name.trim() } } });
+    const origin = /localhost|127\.0\.0\.1/.test(window.location.hostname) ? 'https://wrist-wonder-room.lovable.app' : window.location.origin;
+    const { error } = await supabase.auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: true, emailRedirectTo: origin, data: { display_name: name.trim() } } });
     setBusy(false);
     if (error) { toast.error(`Could not send code: ${error.message}`); return; }
     setSent(true); toast.success(`Code sent to ${email.trim()}. Check your inbox.`);
