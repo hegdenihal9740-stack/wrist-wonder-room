@@ -43,6 +43,7 @@ function AuthPage() {
       } else if (mode === 'register') {
         const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { display_name: name.trim() }, emailRedirectTo: window.location.origin } });
         if (error) throw error;
+        if (data.user && (data.user.identities ?? []).length === 0) { setError('This email is already registered. Please log in instead.'); setMode('login'); return; }
         setMessage(data.session ? 'Your account is ready.' : 'Check your email and confirm your account before signing in.');
       } else if (mode === 'forgot') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
@@ -50,7 +51,7 @@ function AuthPage() {
         setMessage('If an account exists, a password reset link has been sent.');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) throw new Error(error.message === 'Invalid login credentials' ? 'Wrong email or password. Try again or use "Forgot password?".' : error.message);
         setMessage('You are signed in.');
       }
     } catch (error) { setError(error instanceof Error ? error.message : 'Please try again.'); }

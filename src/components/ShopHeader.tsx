@@ -21,48 +21,75 @@ export const getLocalCustomer = (): LocalCustomer | null => {
   try { const r = localStorage.getItem(CUSTOMER_KEY); return r ? (JSON.parse(r) as LocalCustomer) : null; } catch { return null; }
 };
 
+const authOrigin = () => /localhost|127\.0\.0\.1/.test(window.location.hostname) ? 'https://wrist-wonder-room.lovable.app' : window.location.origin;
+
 function MobileLogin({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+  const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [sent, setSent] = useState(false);
+  const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
-  const send = async () => {
-    if (!name.trim()) { toast.error('Enter your name'); return; }
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) { toast.error('Enter a valid email'); return; }
-    setBusy(true);
-    const origin = /localhost|127\.0\.0\.1/.test(window.location.hostname) ? 'https://wrist-wonder-room.lovable.app' : window.location.origin;
-    const { error } = await supabase.auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: true, emailRedirectTo: origin, data: { display_name: name.trim() } } });
-    setBusy(false);
-    if (error) { toast.error(`Could not send code: ${error.message}`); return; }
-    setSent(true); toast.success(`Code sent to ${email.trim()}. Check your inbox.`);
-  };
-  const verify = async () => {
-    setBusy(true);
-    const { error } = await supabase.auth.verifyOtp({ email: email.trim(), token: otp, type: 'email' });
-    setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    localStorage.setItem(CUSTOMER_KEY, JSON.stringify({ name: name.trim(), mobile: '' }));
+  const done = (display: string) => {
+    localStorage.setItem(CUSTOMER_KEY, JSON.stringify({ name: display, mobile: '' }));
     window.dispatchEvent(new Event('pf-customer'));
-    toast.success(`Welcome, ${name.trim()}!`);
-    onOpenChange(false); setSent(false); setOtp('');
+    toast.success(`Welcome, ${display}!`);
+    setPassword(''); onOpenChange(false);
+  };
+  const submit = async () => {
+    const mail = email.trim();
+    if (mode === 'register' && !name.trim()) { toast.error('Enter your name'); return; }
+    if (!/^\S+@\S+\.\S+$/.test(mail)) { toast.error('Enter a valid email'); return; }
+    if (password.length < 8) { toast.error('Password must be at least 8 characters'); return; }
+    setBusy(true);
+    try {
+      if (mode === 'register') {
+        const { data, error } = await supabase.auth.signUp({ email: mail, password, options: { emailRedirectTo: authOrigin(), data: { display_name: name.trim() } } });
+        if (error) { toast.error(error.message); return; }
+        if (data.user && (data.user.identities ?? []).length === 0) { toast.error('This email is already registered. Please log in instead.'); setMode('login'); return; }
+        if (data.session) { done(name.trim()); return; }
+        toast.success(`Account created! Check ${mail} and tap the confirmation link, then log in.`);
+        setMode('login');
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email: mail, password });
+        if (error) {
+          toast.error(/confirm/i.test(error.message) ? 'Please confirm your email first — check your inbox.' : error.message === 'Invalid login credentials' ? 'Wrong email or password. Try again or reset your password.' : error.message);
+          return;
+        }
+        const meta = data.user?.user_metadata ?? {};
+        done(String(meta['display_name'] ?? meta['full_name'] ?? mail.split('@')[0]));
+      }
+    } finally { setBusy(false); }
+  };
+  const forgot = async () => {
+    const mail = email.trim();
+    if (!/^\S+@\S+\.\S+$/.test(mail)) { toast.error('Enter your email first'); return; }
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(mail, { redirectTo: `${authOrigin()}/reset-password` });
+    setBusy(false);
+    if (error) toast.error(error.message); else toast.success(`Password reset link sent to ${mail}.`);
   };
   const google = async () => {
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth('google', { redirect_uri: window.location.origin });
-    setBusy(false);
-    if (result.error) { toast.error(`Google sign-in failed: ${result.error.message}`); return; }
-    if (!result.redirected) onOpenChange(false);
+    try {
+      const result = await lovable.auth.signInWithOAuth('google', { redirect_uri: window.location.origin });
+      if (result.error) { toast.error(`Google sign-in failed: ${result.error.message}`); return; }
+      if (!result.redirected) onOpenChange(false);
+    } catch { toast.error('Google sign-in could not be completed. Please try again.'); }
+    finally { setBusy(false); }
   };
   return <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent className="shop-login">
-      <DialogTitle className="shop-login-title">Login / Register</DialogTitle>
+      <DialogTitle className="shop-login-title">{mode === 'login' ? 'Login' : 'Create account'}</DialogTitle>
       <button type="button" className="fk-buy shop-login-btn" disabled={busy} onClick={google}>Continue with Google</button>
-      <DialogDescription className="shop-login-sub">Or get a one-time code on your email.</DialogDescription>
-      <input className="shop-input" placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} disabled={sent} />
-      <input className="shop-input" type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} disabled={sent} />
-      {sent && <input className="shop-input" inputMode="numeric" maxLength={6} placeholder="Enter 6-digit OTP" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))} />}
-      <button type="button" className="fk-buy shop-login-btn" disabled={busy} onClick={sent ? verify : send}>{busy ? 'Please wait…' : sent ? 'Verify OTP' : 'Send OTP'}</button>
+      <DialogDescription className="shop-login-sub">Or use your email and password.</DialogDescription>
+      {mode === 'register' && <input className="shop-input" autoComplete="name" placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} />}
+      <input className="shop-input" type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <input className="shop-input" type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} placeholder="Password (min 8 characters)" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void submit(); }} />
+      <button type="button" className="fk-buy shop-login-btn" disabled={busy} onClick={submit}>{busy ? 'Please wait…' : mode === 'login' ? 'Login' : 'Register'}</button>
+      <div className="shop-login-sub" style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+        <button type="button" className="underline" disabled={busy} onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>{mode === 'login' ? 'New here? Register' : 'Have an account? Login'}</button>
+        {mode === 'login' && <button type="button" className="underline" disabled={busy} onClick={forgot}>Forgot password?</button>}
+      </div>
     </DialogContent>
   </Dialog>;
 }
@@ -82,7 +109,8 @@ export function ShopHeader() {
     read();
     void supabase.auth.getUser().then(({ data }) => fromSession(data.user));
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') { fromSession(session?.user); toast.success('Signed in with Google'); }
+      if (event === 'SIGNED_IN') fromSession(session?.user);
+      if (event === 'SIGNED_OUT') { localStorage.removeItem(CUSTOMER_KEY); read(); }
     });
     window.addEventListener('pf-customer', read);
     return () => { window.removeEventListener('pf-customer', read); sub.subscription.unsubscribe(); };
@@ -99,7 +127,7 @@ export function ShopHeader() {
     <Link to="/" className="shop-brand">Private Flight</Link>
     <div className="shop-right">
       <button type="button" className="shop-icon-btn" aria-label="Open cart" onClick={() => cart.setOpen(true)}><ShoppingBag size={19} />{count > 0 && <span className="shop-count">{count}</span>}</button>
-      {customer ? <button type="button" className="shop-login-link" onClick={() => { localStorage.removeItem(CUSTOMER_KEY); window.dispatchEvent(new Event('pf-customer')); toast.success('Logged out'); }}><UserRound size={16} /> {customer.name.split(' ')[0]} · Logout</button>
+      {customer ? <button type="button" className="shop-login-link" onClick={async () => { await supabase.auth.signOut(); localStorage.removeItem(CUSTOMER_KEY); window.dispatchEvent(new Event('pf-customer')); toast.success('Logged out'); }}><UserRound size={16} /> {customer.name.split(' ')[0]} · Logout</button>
         : <button type="button" className="shop-login-link" onClick={() => setLogin(true)}><UserRound size={16} /> Login / Register</button>}
     </div>
     <MobileLogin open={login} onOpenChange={setLogin} />
