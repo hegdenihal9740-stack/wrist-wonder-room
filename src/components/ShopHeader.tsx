@@ -109,7 +109,8 @@ export function ShopHeader() {
     read();
     void supabase.auth.getUser().then(({ data }) => fromSession(data.user));
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') { fromSession(session?.user); toast.success('Signed in with Google'); }
+      if (event === 'SIGNED_IN') fromSession(session?.user);
+      if (event === 'SIGNED_OUT') { localStorage.removeItem(CUSTOMER_KEY); read(); }
     });
     window.addEventListener('pf-customer', read);
     return () => { window.removeEventListener('pf-customer', read); sub.subscription.unsubscribe(); };
@@ -126,7 +127,7 @@ export function ShopHeader() {
     <Link to="/" className="shop-brand">Private Flight</Link>
     <div className="shop-right">
       <button type="button" className="shop-icon-btn" aria-label="Open cart" onClick={() => cart.setOpen(true)}><ShoppingBag size={19} />{count > 0 && <span className="shop-count">{count}</span>}</button>
-      {customer ? <button type="button" className="shop-login-link" onClick={() => { localStorage.removeItem(CUSTOMER_KEY); window.dispatchEvent(new Event('pf-customer')); toast.success('Logged out'); }}><UserRound size={16} /> {customer.name.split(' ')[0]} · Logout</button>
+      {customer ? <button type="button" className="shop-login-link" onClick={async () => { await supabase.auth.signOut(); localStorage.removeItem(CUSTOMER_KEY); window.dispatchEvent(new Event('pf-customer')); toast.success('Logged out'); }}><UserRound size={16} /> {customer.name.split(' ')[0]} · Logout</button>
         : <button type="button" className="shop-login-link" onClick={() => setLogin(true)}><UserRound size={16} /> Login / Register</button>}
     </div>
     <MobileLogin open={login} onOpenChange={setLogin} />
