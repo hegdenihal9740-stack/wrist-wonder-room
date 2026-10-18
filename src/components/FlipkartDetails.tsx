@@ -54,7 +54,7 @@ export function FlipkartDetails({
   const sold = left !== undefined && left <= 0;
   const price = prices[w.id];
   const wish = useWishlist();
-  const imgs = [w.image, `${FEAT}${w.id}`, life[w.id], ...extra[w.id]];
+  const imgs = [w.image, ...(m.specs.length ? [`${FEAT}${w.id}`] : []), ...(life[w.id] ? [life[w.id]!] : []), ...(extra[w.id] ?? [])];
   const feat = <FeatureCard img={w.image} labels={m.specs} />;
   const [dial, setDial] = useState('42 mm');
   const [idx, setIdx] = useState(0);

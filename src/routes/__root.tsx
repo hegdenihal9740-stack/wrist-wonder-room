@@ -15,6 +15,7 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { CustomerAccounts } from "@/components/CustomerAccounts";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { ensureProducts } from "@/lib/products";
 
 function NotFoundComponent() {
   return (
@@ -77,6 +78,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: async () => { await ensureProducts(); },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
