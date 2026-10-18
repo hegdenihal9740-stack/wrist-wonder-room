@@ -8,14 +8,14 @@ export type ProductRow = Database['public']['Tables']['products']['Row'];
 export const BUILT_IN = ['steel', 'black', 'gold', 'rosegold'];
 export const isBuiltIn = (id: string) => BUILT_IN.includes(id);
 
-const url = import.meta.env.VITE_SUPABASE_URL as string;
-const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+const url = import.meta.env['VITE_SUPABASE_URL'] as string;
+const key = import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] as string;
 const pub = () => createClient<Database>(url, key, { auth: { persistSession: false, autoRefreshToken: false, storage: undefined } });
 
 /** Merges seller-added watches into the shared catalog so every page shows them. */
 export function applyProducts(rows: ProductRow[]) {
   const list = watches as unknown as Record<string, unknown>[];
-  for (let i = list.length - 1; i >= 0; i--) if (!isBuiltIn(String(list[i]!.id))) list.splice(i, 1);
+  for (let i = list.length - 1; i >= 0; i--) if (!isBuiltIn(String(list[i]!['id']))) list.splice(i, 1);
   for (const r of rows) {
     if (isBuiltIn(r.id) || !r.active) continue;
     const id = r.id as WatchTone;
