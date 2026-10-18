@@ -80,6 +80,13 @@ function OrderCard({ order: o, onSaved }: { order: Order; onSaved: () => void })
   const [msg, setMsg] = useState('');
   async function save() {
     setBusy(true); setMsg('');
+    if (status === 'cancelled' && o.status !== 'cancelled') {
+      if (!confirm('Cancel this order? Stock will be returned.')) { setBusy(false); return; }
+      const { data, error } = await db.rpc('cancel_order', { _order_id: o.id });
+      setBusy(false);
+      if (error || !data) setMsg('Cancel failed.'); else { setMsg('Cancelled.'); onSaved(); }
+      return;
+    }
     const { error } = await db.from('orders').update({ status, courier: courier || null, awb: awb.trim() || null, tracking_url: url.trim() || null }).eq('id', o.id);
     setBusy(false);
     if (error) setMsg('Save failed.'); else { setMsg('Saved.'); onSaved(); }

@@ -7,6 +7,7 @@ import { cart, prices } from '@/lib/cart';
 import { useWishlist, wishlist } from '@/lib/wishlist';
 import { watches } from '@/lib/watches';
 import { loadOrders, orderStatus, trackingLink, type Order } from '@/lib/orders';
+import { supabase } from '@/integrations/supabase/client';
 const usd = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
@@ -80,6 +81,12 @@ function AccountPage() {
                 <div><dt>Payment</dt><dd>{o.payment === 'cod' ? 'Cash on delivery' : o.payment}</dd></div>
                 {o.address && <div><dt>Ship to</dt><dd>{o.address.name}, {o.address.address}, {o.address.city}, {o.address.state} — {o.address.pincode} · {o.address.mobile}</dd></div>}
               </dl><Link to="/invoice/$orderId" params={{ orderId: o.id }} className="co-change">View / print invoice</Link></>}
+            {!cancelled && index <= 1 && <button type="button" className="co-change text-destructive" onClick={async () => {
+              if (!confirm('Cancel this order?')) return;
+              const { data, error } = await (supabase as any).rpc('cancel_order', { _order_id: o.id });
+              if (error || !data) { alert('This order can no longer be cancelled.'); return; }
+              setOrders((all) => all.map((x) => x.id === o.id ? { ...x, status: 'cancelled' } : x));
+            }}>Cancel order</button>}
           </article>;
         })}</>}
 
