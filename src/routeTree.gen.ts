@@ -17,6 +17,7 @@ import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReturnsRouteImport } from './routes/returns'
+import { Route as SellerRouteImport } from './routes/seller'
 import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
 import { Route as InvoiceOrderIdRouteImport } from './routes/invoice.$orderId'
 import { Route as ShopWatchIdRouteImport } from './routes/shop.$watchId'
@@ -62,6 +63,11 @@ const ReturnsRoute = ReturnsRouteImport.update({
   path: '/returns',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellerRoute = SellerRouteImport.update({
+  id: '/seller',
+  path: '/seller',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
   id: '/shipping-policy',
   path: '/shipping-policy',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/reset-password': typeof ResetPasswordRoute
   '/returns': typeof ReturnsRoute
+  '/seller': typeof SellerRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/invoice/$orderId': typeof InvoiceOrderIdRoute
   '/shop/$watchId': typeof ShopWatchIdRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/reset-password': typeof ResetPasswordRoute
   '/returns': typeof ReturnsRoute
+  '/seller': typeof SellerRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/invoice/$orderId': typeof InvoiceOrderIdRoute
   '/shop/$watchId': typeof ShopWatchIdRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/reset-password': typeof ResetPasswordRoute
   '/returns': typeof ReturnsRoute
+  '/seller': typeof SellerRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/invoice/$orderId': typeof InvoiceOrderIdRoute
   '/shop/$watchId': typeof ShopWatchIdRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/reset-password'
     | '/returns'
+    | '/seller'
     | '/shipping-policy'
     | '/invoice/$orderId'
     | '/shop/$watchId'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/reset-password'
     | '/returns'
+    | '/seller'
     | '/shipping-policy'
     | '/invoice/$orderId'
     | '/shop/$watchId'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/reset-password'
     | '/returns'
+    | '/seller'
     | '/shipping-policy'
     | '/invoice/$orderId'
     | '/shop/$watchId'
@@ -180,6 +192,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ReturnsRoute: typeof ReturnsRoute
+  SellerRoute: typeof SellerRoute
   ShippingPolicyRoute: typeof ShippingPolicyRoute
   InvoiceOrderIdRoute: typeof InvoiceOrderIdRoute
   ShopWatchIdRoute: typeof ShopWatchIdRoute
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReturnsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seller': {
+      id: '/seller'
+      path: '/seller'
+      fullPath: '/seller'
+      preLoaderRoute: typeof SellerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shipping-policy': {
       id: '/shipping-policy'
       path: '/shipping-policy'
@@ -284,6 +304,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ReturnsRoute: ReturnsRoute,
+  SellerRoute: SellerRoute,
   ShippingPolicyRoute: ShippingPolicyRoute,
   InvoiceOrderIdRoute: InvoiceOrderIdRoute,
   ShopWatchIdRoute: ShopWatchIdRoute,
