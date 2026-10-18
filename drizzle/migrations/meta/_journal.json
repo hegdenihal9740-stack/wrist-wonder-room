@@ -15,6 +15,13 @@
       "when": 1792332350594,
       "tag": "0001_seller_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792333068410,
+      "tag": "0002_products_catalog",
+      "breakpoints": true
     }
   ]
 }

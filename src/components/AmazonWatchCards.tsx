@@ -3,6 +3,7 @@ import { ScanLine, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { cart, prices } from '@/lib/cart';
 import { watches, type WatchTone } from '@/lib/watches';
+import { isBuiltIn } from '@/lib/products';
 import { cardMeta as meta } from '@/lib/watch-meta';
 
 const usd = (n: number) => n.toLocaleString('en-IN');
@@ -47,7 +48,7 @@ export function WatchProductCard({ tone }: { tone: WatchTone }) {
         <p className="az-small az-muted">Delivered by {tomorrow}{m.stock ? ` · only ${m.stock} left` : ''}</p>
         <button type="button" className="az-add" onClick={() => { cart.add(w.id); toast.success(`${w.name} added to cart`); }}>Add to cart</button>
         <div className="az-links">
-          <Link to="/watches/$watchId" params={{ watchId: w.id }} search={{ tryon: true }} className="az-tryon"><ScanLine size={14} /> Try on</Link>
+          {isBuiltIn(w.id) && <Link to="/watches/$watchId" params={{ watchId: w.id }} search={{ tryon: true }} className="az-tryon"><ScanLine size={14} /> Try on</Link>}
           <Link to="/shop/$watchId" params={{ watchId: w.id }} className="az-more">Details</Link>
         </div>
       </div>
