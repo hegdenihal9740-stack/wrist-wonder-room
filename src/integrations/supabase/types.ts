@@ -163,6 +163,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_order: { Args: { _order_id: string }; Returns: boolean }
       claim_store_owner: { Args: never; Returns: boolean }
       has_role: {
         Args: {
