@@ -10,33 +10,180 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as CollectionRouteImport } from './routes/collection'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ReturnsRouteImport } from './routes/returns'
+import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
+import { Route as InvoiceOrderIdRouteImport } from './routes/invoice.$orderId'
+import { Route as ShopWatchIdRouteImport } from './routes/shop.$watchId'
+import { Route as WatchesWatchIdRouteImport } from './routes/watches.$watchId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
+  id: '/shipping-policy',
+  path: '/shipping-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvoiceOrderIdRoute = InvoiceOrderIdRouteImport.update({
+  id: '/invoice/$orderId',
+  path: '/invoice/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopWatchIdRoute = ShopWatchIdRouteImport.update({
+  id: '/shop/$watchId',
+  path: '/shop/$watchId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WatchesWatchIdRoute = WatchesWatchIdRouteImport.update({
+  id: '/watches/$watchId',
+  path: '/watches/$watchId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
+  '/checkout': typeof CheckoutRoute
+  '/collection': typeof CollectionRoute
+  '/contact': typeof ContactRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/returns': typeof ReturnsRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
+  '/invoice/$orderId': typeof InvoiceOrderIdRoute
+  '/shop/$watchId': typeof ShopWatchIdRoute
+  '/watches/$watchId': typeof WatchesWatchIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
+  '/checkout': typeof CheckoutRoute
+  '/collection': typeof CollectionRoute
+  '/contact': typeof ContactRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/returns': typeof ReturnsRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
+  '/invoice/$orderId': typeof InvoiceOrderIdRoute
+  '/shop/$watchId': typeof ShopWatchIdRoute
+  '/watches/$watchId': typeof WatchesWatchIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/auth': typeof AuthRoute
+  '/checkout': typeof CheckoutRoute
+  '/collection': typeof CollectionRoute
+  '/contact': typeof ContactRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/returns': typeof ReturnsRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
+  '/invoice/$orderId': typeof InvoiceOrderIdRoute
+  '/shop/$watchId': typeof ShopWatchIdRoute
+  '/watches/$watchId': typeof WatchesWatchIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/auth'
+    | '/checkout'
+    | '/collection'
+    | '/contact'
+    | '/reset-password'
+    | '/returns'
+    | '/shipping-policy'
+    | '/invoice/$orderId'
+    | '/shop/$watchId'
+    | '/watches/$watchId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/account'
+    | '/auth'
+    | '/checkout'
+    | '/collection'
+    | '/contact'
+    | '/reset-password'
+    | '/returns'
+    | '/shipping-policy'
+    | '/invoice/$orderId'
+    | '/shop/$watchId'
+    | '/watches/$watchId'
+  id:
+    | '__root__'
+    | '/'
+    | '/account'
+    | '/auth'
+    | '/checkout'
+    | '/collection'
+    | '/contact'
+    | '/reset-password'
+    | '/returns'
+    | '/shipping-policy'
+    | '/invoice/$orderId'
+    | '/shop/$watchId'
+    | '/watches/$watchId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
+  AuthRoute: typeof AuthRoute
+  CheckoutRoute: typeof CheckoutRoute
+  CollectionRoute: typeof CollectionRoute
+  ContactRoute: typeof ContactRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  ReturnsRoute: typeof ReturnsRoute
+  ShippingPolicyRoute: typeof ShippingPolicyRoute
+  InvoiceOrderIdRoute: typeof InvoiceOrderIdRoute
+  ShopWatchIdRoute: typeof ShopWatchIdRoute
+  WatchesWatchIdRoute: typeof WatchesWatchIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +195,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/returns': {
+      id: '/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shipping-policy': {
+      id: '/shipping-policy'
+      path: '/shipping-policy'
+      fullPath: '/shipping-policy'
+      preLoaderRoute: typeof ShippingPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invoice/$orderId': {
+      id: '/invoice/$orderId'
+      path: '/invoice/$orderId'
+      fullPath: '/invoice/$orderId'
+      preLoaderRoute: typeof InvoiceOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop/$watchId': {
+      id: '/shop/$watchId'
+      path: '/shop/$watchId'
+      fullPath: '/shop/$watchId'
+      preLoaderRoute: typeof ShopWatchIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/watches/$watchId': {
+      id: '/watches/$watchId'
+      path: '/watches/$watchId'
+      fullPath: '/watches/$watchId'
+      preLoaderRoute: typeof WatchesWatchIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
+  AuthRoute: AuthRoute,
+  CheckoutRoute: CheckoutRoute,
+  CollectionRoute: CollectionRoute,
+  ContactRoute: ContactRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  ReturnsRoute: ReturnsRoute,
+  ShippingPolicyRoute: ShippingPolicyRoute,
+  InvoiceOrderIdRoute: InvoiceOrderIdRoute,
+  ShopWatchIdRoute: ShopWatchIdRoute,
+  WatchesWatchIdRoute: WatchesWatchIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
